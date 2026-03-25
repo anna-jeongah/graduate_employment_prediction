@@ -45,7 +45,7 @@ pip install ipython jupyterlab notebook
 
 ### Execution
 
-Download the five csv files contain the imputed data with weights in the inputed_data_with_weights folder, or run the R-code for imputation and joining with weights, and export results to csv.
+Download the five csv files contain the imputed data with weights in the imputed_data_with_weights folder, or run the R-code for imputation and joining with weights, and export results to csv.
 
 Change filepath for the five csv files at the top of the code.
 
