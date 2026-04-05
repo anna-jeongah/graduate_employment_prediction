@@ -32,7 +32,9 @@ install.packages("Metrics")
 ### Execution
 Go through the code and change pathnames for the ngs microdata csv file.
 
-Either downlaod the imputed data from the inputed_data folder, or run the R-code to execute the multiple imputation with MICE and generate the imputed datasets.
+Either download the imputed data from the imputed_data folder, or run the R-code to execute the multiple imputation with MICE and generate the imputed datasets.
+
+For the logistic regression files, ensure that you download the imputed datasets from the imputed_data folder and change the pathnames accordingly for the imp_data variables within the code.
 
 
 ## Random Forest - Installation/Usage
