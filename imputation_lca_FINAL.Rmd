@@ -21,7 +21,7 @@ library(poLCA) # lca modelling
 
 ```{r load data}
 # data <- read.csv(file.choose(), colClasses = "character") # run within R chunk
-data <- read.csv("/Users/michellele/Downloads/data 501/5012-NGS-END_2020-CSV/ngs2020_pumf.csv", colClasses = "character") # run to knit as pdf
+data <- read.csv("/Users/anna/Documents/01_university/01_academics/12_Winter2026/DATA 501/Project/Dataset/national_graduate_survey_2020-CSV/ngs2020_pumf.csv", colClasses = "character") # run to knit as pdf
 
 # check the number of rows
 nrow(data)
@@ -298,7 +298,7 @@ data_impute <- data_impute %>%
 # }
 
 # completed datasets are also provided
-data_completed <- read.csv("/Users/michellele/Downloads/data 501/data_completed_imp1.csv", colClasses = "character")
+data_completed <- read.csv('/Users/anna/Documents/01_university/01_academics/12_Winter2026/DATA 501/Project/Exploration/imputed_data/data_completed_imp1.csv', colClasses = "character")
 
 # add back the ID and employment status columns
 data_completed$PUMFID <- data_reduced$PUMFID
@@ -567,23 +567,23 @@ Based on the above results, the model with 5 classes is most optimal. In general
 
 ```{r load other imputed datasets}
 # load other imputated datasets and add back in the missing columns
-data_completed_1 <- read.csv("/Users/michellele/Downloads/data 501/data_completed_imp1.csv", colClasses = "character")
+data_completed_1 <- read.csv('/Users/anna/Documents/01_university/01_academics/12_Winter2026/DATA 501/Project/Exploration/imputed_data/data_completed_imp1.csv', colClasses = "character")
 data_completed_1$PUMFID <- data_reduced$PUMFID
 data_completed_1$LFSTATP <- data_reduced$LFSTATP
 
-data_completed_2 <- read.csv("/Users/michellele/Downloads/data 501/data_completed_imp2.csv", colClasses = "character")
+data_completed_2 <- read.csv('/Users/anna/Documents/01_university/01_academics/12_Winter2026/DATA 501/Project/Exploration/imputed_data/data_completed_imp2.csv', colClasses = "character")
 data_completed_2$PUMFID <- data_reduced$PUMFID
 data_completed_2$LFSTATP <- data_reduced$LFSTATP
 
-data_completed_3 <- read.csv("/Users/michellele/Downloads/data 501/data_completed_imp3.csv", colClasses = "character")
+data_completed_3 <- read.csv('/Users/anna/Documents/01_university/01_academics/12_Winter2026/DATA 501/Project/Exploration/imputed_data/data_completed_imp3.csv', colClasses = "character")
 data_completed_3$PUMFID <- data_reduced$PUMFID
 data_completed_3$LFSTATP <- data_reduced$LFSTATP
 
-data_completed_4 <- read.csv("/Users/michellele/Downloads/data 501/data_completed_imp4.csv", colClasses = "character")
+data_completed_4 <- read.csv('/Users/anna/Documents/01_university/01_academics/12_Winter2026/DATA 501/Project/Exploration/imputed_data/data_completed_imp4.csv', colClasses = "character")
 data_completed_4$PUMFID <- data_reduced$PUMFID
 data_completed_4$LFSTATP <- data_reduced$LFSTATP
 
-data_completed_5 <- read.csv("/Users/michellele/Downloads/data 501/data_completed_imp5.csv", colClasses = "character")
+data_completed_5 <- read.csv('/Users/anna/Documents/01_university/01_academics/12_Winter2026/DATA 501/Project/Exploration/imputed_data/data_completed_imp5.csv', colClasses = "character")
 data_completed_5$PUMFID <- data_reduced$PUMFID
 data_completed_5$LFSTATP <- data_reduced$LFSTATP
 
@@ -607,3 +607,120 @@ data_completed_5[] <- lapply(data_completed_5, function(x) {
   if (is.character(x)) as.factor(x) else x
 })
 ```
+
+
+# LCA Results Analysis
+
+```{r rejoin to get weights, eval=FALSE}
+data_full <- read.csv("/Users/anna/Documents/01_university/01_academics/12_Winter2026/DATA 501/Project/Dataset/national_graduate_survey_2020-CSV/ngs2020_pumf.csv", colClasses = "character") 
+
+#Join survey weights column using id column
+lca_data <- lca_data %>%
+  left_join(
+    dplyr::select(data_full, PUMFID, WTPF),  
+    by = c("PUMFID" = "PUMFID")       
+  )
+
+lca_data$WTPF <- as.numeric(lca_data$WTPF) #Ensure weights are numeric
+
+head(lca_data)
+```
+
+
+## Chi-squared test of independence
+
+Conduct the chi-squared test on the proportion of employed graduates in each class, to determine if there is independence between the proportion of employed and class membership.
+
+```{r weigted pearson's chi-sq}
+# Create weighted contingency table
+tbl <- xtabs(WTPF ~ class + LFSTATP, data = lca_data)
+tbl
+
+# Convert to proportions (optional)
+prop_tbl <- prop.table(tbl, margin = 1)  
+prop_tbl
+
+# Weighted chi-square test
+chisq_weighted <- chisq.test(tbl, correct = FALSE)  # Pearson's chi-sq
+chisq_weighted
+```
+
+## Standard Error calculation using replica weights
+```{r}
+library(haven)
+
+df_replica_weights <- read_sas("/Users/anna/Documents/01_university/01_academics/12_Winter2026/DATA 501/Project/national_graduate_survey_2020-CSV/Data/ngs2020_pbsw.sas7bdat") #Change path to where your survey replica weights .sas7bdat is located
+
+df_replica_weights$PUMFID <- as.character(df_replica_weights$PUMFID)
+
+head(df_replica_weights)
+dim(df_replica_weights)
+```
+
+```{r}
+#Left join with lca_data using id
+lca_data_replica_weights <- lca_data %>%
+  left_join(df_replica_weights, by = "PUMFID")
+```
+
+```{r}
+library(survey)
+
+#Create survey design
+design <- svrepdesign(
+  weights = ~WTPF,
+  repweights = dplyr::select(lca_data_replica_weights, dplyr::starts_with("WRPF")),
+  data = lca_data_replica_weights,
+  type = "bootstrap",
+  combined.weights = TRUE
+)
+```
+
+```{r}
+svyby(
+  ~I(LFSTATP == 1),
+  ~class,
+  design,
+  svymean
+)
+```
+
+
+```{r}
+prop_df <- as.data.frame(
+  svyby(
+    ~factor(LFSTATP),
+    ~class,
+    design,
+    svymean
+  )
+)
+
+prop_df
+#svyby() still computes the variance internally, even though you did not request it. 
+#It stores that variance inside the returned object as attributes.
+#However, these are not guaranteed to correspond exactly to the category columns, because they are derived from the variance–covariance matrix of the estimates and then printed in a simplified way.
+```
+
+```{r}
+se_df <- as.data.frame(
+  svyby(
+    ~factor(LFSTATP), #Change to get weighted prop and se for different features
+    ~class,
+    design = design,
+    svymean,
+    vartype = "se"
+  )
+)
+
+se_df[-1]   <- round(se_df[-1], 4)
+
+se_df
+```
+
+```{r}
+write.csv(se_df, 'prop_se/prop_se_FEATURE_NAME.csv', row.names = FALSE) #CHANGE FILE NAME BEFORE RUNNING IF YOU DON'T WANT TO OVERWRITE PREVIOUS FILE
+```
+
+
+
