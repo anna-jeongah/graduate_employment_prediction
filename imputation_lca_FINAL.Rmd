@@ -632,6 +632,9 @@ head(lca_data)
 Conduct the chi-squared test on the proportion of employed graduates in each class, to determine if there is independence between the proportion of employed and class membership.
 
 ```{r weigted pearson's chi-sq}
+#Consulted Geeks for Geeks for syntax for chi-squared test in R: 
+  #Chi-Square Test in R. Geeks for Geeks. (2025, July 11). https://www.geeksforgeeks.org/r-language/chi-square-test-in-r/ 
+
 # Create weighted contingency table
 tbl <- xtabs(WTPF ~ class + LFSTATP, data = lca_data)
 tbl
@@ -646,6 +649,16 @@ chisq_weighted
 ```
 
 ## Standard Error calculation using replica weights
+
+```{r}
+#The below code using the 'survey' R library was written consulting this webpage:
+  #Specify survey design with replicate weights. (n.d.). https://r-survey.r-forge.r-project.org/survey/html/svrepdesign.html 
+
+# Consulted ChatGPT for assistance in code writing and code syntax. Analysis logic was authored by me:
+  #OpenAI. (2026). ChatGPT [Large language model]. https://chat.openai.com
+```
+
+
 ```{r}
 library(haven)
 
