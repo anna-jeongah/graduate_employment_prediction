@@ -173,6 +173,11 @@ test_5 <- data_filtered_5[-train,]
 
 # Prepare Data for Stepwise AIC/BIC Logistic Regression
 
+```{r}
+# The idea to use R code to automate the for the logistic regression model was by me; the syntax was derived from ChatGPT
+# OpenAI. (2026). ChatGPT [Large language model]. https://chat.openai.com
+```
+
 ```{r prepare for stepwise AIC/BIC logistic regression modeling}
 predictors_1 <- setdiff(names(data_filtered_1), c("LFCINDP", "PUMFID", "LFSTATP", "WTPF", "PGMCIPAP"))
 predictors_2 <- setdiff(names(data_filtered_2), c("LFCINDP", "PUMFID", "LFSTATP", "WTPF", "PGMCIPAP"))
@@ -211,6 +216,11 @@ full_model_4 <- glm(formula_4,
 full_model_5 <- glm(formula_5,
              data = data_filtered_5, subset = train,
              family = binomial)
+```
+
+```{r}
+# Code for AIC and BIC stepwise logistic regression were adapted from the following
+# R Core Team. (2019). step: Choose a model by AIC in a stepwise algorithm (R package stats, version 3.6.2). RDocumentation. https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/step
 ```
 
 ```{r stepwise aic logistic regression}
