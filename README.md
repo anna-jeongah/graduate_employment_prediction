@@ -13,7 +13,7 @@ Given that employment is top of mind for many students, our aim is to examine wh
 Download the 202 NGS microdata file from statcan (https://www150.statcan.gc.ca/n1/pub/81m0011x/81m0011x2019001-eng.htm)
 
 
-## LCA & Logistic Regression - Installation/Usage
+## LCA - Installation/Usage
 Install R
 
 ### Packages
@@ -37,8 +37,6 @@ Go through the code and change pathnames for the ngs microdata csv file.
 
 Either download the imputed data from the imputed_data folder, or run the R-code to execute the multiple imputation with MICE and generate the imputed datasets.
 
-For the logistic regression files, ensure that you download the imputed datasets from the imputed_data folder and change the pathnames accordingly for the imp_data variables within the code.
-
 
 ## LCA Analysis - Installation/Usage
 Install python
@@ -50,6 +48,26 @@ pip install ipython jupyterlab notebook
 ```
 ### Execution
 Export the lca_data results from the LCA R code, as a csv. Read in this csv in the first code block of python notebook.
+
+## Logistic Regression - Installation/Usage
+Install R
+
+###Packages
+
+install.packages("dplyr") 
+install.packages("mice")
+install.packages("car") 
+install.packages("pROC") 
+install.packages("caret")
+install.packages("Metrics") 
+install.packages("survey") 
+
+### Execution
+Go through the code and change pathname for the ngs microdata csv file.
+
+Ensure that you download the imputed datasets from the imputed_data folder and change the pathnames accordingly for the five imp_data variables within the code. 
+
+Do this for each logistic regression file across the three fields of study.
 
 ## Random Forest - Installation/Usage
 Install Python
