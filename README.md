@@ -10,7 +10,7 @@ The LCA focuses on all bachelor's graduates, while the logistic regression and r
 Given that employment is top of mind for many students, our aim is to examine what graduate characteristics, if any, are relevant and can help predict an undergraduate’s employability in Canada. Additionally, a key motivation is to address the less explored area of segmented analysis by field of study.
 
 ## Data
-Download the 202 NGS microdata file from statcan (https://www150.statcan.gc.ca/n1/pub/81m0011x/81m0011x2019001-eng.htm)
+Download the class of 2020 NGS microdata file from statcan (https://www150.statcan.gc.ca/n1/pub/81m0011x/81m0011x2019001-eng.htm)
 
 ## html version of R files
 Download and open the html files in the R_file_html_version folder to view results without executing the R code.
